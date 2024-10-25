@@ -11,6 +11,9 @@ program testcase(intf_wb intf);
      $display("******************* TESTCASE 2 *******************");
      $display("--------------------------------------------------\n");
 
+     $display("[INFO] Initializing Parameters for Module"); 
+     env.drvr.init_param(intf.sys_clk);
+
      $display("[INFO] Initializing");
      env.drvr.reset_test(intf.sys_clk);
      #1000;

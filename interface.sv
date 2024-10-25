@@ -29,4 +29,17 @@ interface intf_wb #(parameter dw=32, data_bits=32) (input sys_clk, sdram_clk);  
     logic sdr_cas_n;
   	logic sdr_we_n;
 
+    //MODULE PARAMS
+    logic [1:0]  Req_Depth;
+    logic        SDR_Enable;
+    logic [12:0] SDR_Mode_Reg;
+    logic [3:0]  SDR_tras_d;
+    logic [3:0]  SDR_trp_d;
+    logic [3:0]  SDR_trcd_d;
+    logic [2:0]  SDR_cas;
+    logic [3:0]  SDR_trcar_d;
+    logic [3:0]  SDR_twr_d;
+    logic [11:0] SDR_rf_sh;
+    logic [3:0]  SDR_rf_max;
+
 endinterface
