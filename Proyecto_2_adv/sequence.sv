@@ -38,7 +38,7 @@ class write_data_item extends uvm_sequence_item;
 
   rand logic [31:0] Address;
   rand logic [7:0]  bl;
-  rand logic [31:0] data; 
+  rand logic [31:0] data;
 
   // Address must be in range 0x000000 to 0x003FFFFF
   constraint addr_c { Address inside {[32'h00000000:32'h003FFFFF]}; }
@@ -66,6 +66,18 @@ class read_data_item extends uvm_sequence_item;
 
 endclass
 
+class t_delay_item extends uvm_sequence_item;
+  `uvm_object_utils(t_delay_item)
+
+  // Random delays; no constraints by the moment
+  rand logic [14:0] t_delay;
+
+  function new(string name = "t_delay_item");
+    super.new(name);
+  endfunction
+
+endclass
+
 class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
   `uvm_object_utils(sdram_controller_sequence)
 
@@ -74,9 +86,11 @@ class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
   endfunction
 
   virtual task body();
+  
     init_params_item init_tr;
     write_data_item write_tr;
     read_data_item read_tr;
+    t_delay_item delay_tr;
 
     // Transacción de inicialización
     init_tr = init_params_item::type_id::create("init_tr");
@@ -95,6 +109,11 @@ class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
     start_item(read_tr);
     if (!read_tr.randomize()) `uvm_error("SEQ_ERR", "Error while randomizing read_tr");
     finish_item(read_tr);
+
+    delay_tr = t_delay_item::type_id::create("delay_tr");
+    start_item(delay_tr);
+    if (!delay_tr.randomize()) `uvm_error("SEQ_ERR", "Error while randomizing delay_tr");
+
   endtask
 
 endclass
