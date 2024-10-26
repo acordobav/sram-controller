@@ -10,4 +10,4 @@
 `include "sdrc_define.v"
 `include "sdrc_req_gen.v"
 `include "sdrc_xfr_ctl.v"
-
+`include "top_hdl.sv"
