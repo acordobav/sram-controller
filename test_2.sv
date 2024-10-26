@@ -11,12 +11,10 @@ program testcase(intf_wb intf);
      $display("******************* TESTCASE 2 *******************");
      $display("--------------------------------------------------\n");
 
-     $display("[INFO] Initializing Parameters for Module"); 
-     env.drvr.init_param(intf.sys_clk);
-
      $display("[INFO] Initializing");
      env.drvr.reset_test(intf.sys_clk);
-     #1000;
+     sti.t_delay = tiempo(); // Update t_delay with a new random value
+     #sti.t_delay;
 
      $display("---------------------------------------------------");
      $display(" Case: 6 Random 2 write and 2 read random");
@@ -31,18 +29,27 @@ program testcase(intf_wb intf);
      for(k=0; k < 2; k++) begin
        $display("[INFO] ---WRITE Test---");
        env.drvr.burst_write(sti.Address,sti.bl); 
-       #1000;
+       sti.t_delay = tiempo(); // Update t_delay with a new random value
+       #sti.t_delay;
        $display("[INFO] ---READ Test---");
        env.drvr.burst_read();  
-       #1000;
+       sti.t_delay = tiempo(); // Update t_delay with a new random value
+       #sti.t_delay;
      end
 
-     #10000;
+     sti.t_delay = tiempo(); // Update t_delay with a new random value
+     #sti.t_delay;
 
      $display("\n[INFO] ---CHECKER---");
      env.mntr.eot_check();
-     #100;
+     sti.t_delay = tiempo(); // Update t_delay with a new random value
+     #sti.t_delay;
      $finish;
   
 end 
 endprogram
+
+
+function int tiempo();
+    tiempo = $urandom_range(1000, 10000); // Devuelve el valor generado
+endfunction

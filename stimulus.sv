@@ -2,6 +2,7 @@ class stimulus;
 	rand logic [31:0] Address;
   rand logic [7:0]  bl;
   rand logic [31:0] data; 
+  rand logic [14:0] t_delay;
 
   // Randomize Parameters of the module
   rand logic [1:0]  Req_Depth;
