@@ -8,6 +8,22 @@ class scoreboard extends uvm_scoreboard;
 		super.new (name, parent);
   endfunction
   
+  
+  uvm_analysis_imp_drv #(driver, scoreboard) drv;
+  uvm_analysis_imp_mon #(driver, scoreboard) mon;
+
+  
+  function void build_phase (uvm_phase phase);
+        drv = new ("drv", this);
+        mon = new ("mon", this);
+  endfunction
+
+  
+  ///WIP   not ready yet
+
+
+
+  /*
   int afifo[$]; // address  fifo
   int bfifo[$]; // Burst Length fifo
 
@@ -33,6 +49,6 @@ class scoreboard extends uvm_scoreboard;
       $display("Warning: address %X not found in memory", address);
       return -1;  // Return -1 if address doesn't exist
     end
-  endfunction
+  endfunction*/
   
 endclass
