@@ -1,4 +1,8 @@
-class init_params_sequencer extends uvm_sequencer #(init_params_item);
+class init_params_sequencer extends uvm_sequencer;    
+  `uvm_component_utils(init_params_sequencer)
+  
+  
+  //#(init_params_item);
   
   // Constructor
   function new(string name = "init_params_sequencer", uvm_component parent = null);
