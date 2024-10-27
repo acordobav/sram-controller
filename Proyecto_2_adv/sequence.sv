@@ -1,4 +1,4 @@
-class init_params_item extends uvm_sequence_item;
+class init_params_item extends uvm_sequence;
   `uvm_object_utils(init_params_item)
 
   // Randomize Parameters of the module
@@ -70,7 +70,9 @@ class t_delay_item extends uvm_sequence_item;
   `uvm_object_utils(t_delay_item)
 
   // Random delays; no constraints by the moment
+
   rand logic [14:0] t_delay;
+  constraint t_delay_r {t_delay inside {[14'h3E8 : 14'h2710]}; } //t_delay  = $urandom_range(1000, 10000); 
 
   function new(string name = "t_delay_item");
     super.new(name);
@@ -113,7 +115,7 @@ class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
     delay_tr = t_delay_item::type_id::create("delay_tr");
     start_item(delay_tr);
     if (!delay_tr.randomize()) `uvm_error("SEQ_ERR", "Error while randomizing delay_tr");
-
+	finish_item(delay_tr);
   endtask
 
 endclass
