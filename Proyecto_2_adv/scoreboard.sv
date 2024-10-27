@@ -1,5 +1,13 @@
-class scoreboard;
+`uvm_analysis_imp_decl( _drv )
+`uvm_analysis_imp_decl( _mon ) 
 
+class scoreboard extends uvm_scoreboard;
+  `uvm_component_utils (scoreboard)
+
+  function new (string name, uvm_component parent=null);
+		super.new (name, parent);
+  endfunction
+  
   int afifo[$]; // address  fifo
   int bfifo[$]; // Burst Length fifo
 
