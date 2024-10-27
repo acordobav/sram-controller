@@ -6,7 +6,7 @@ class test_basic extends uvm_test;
   endfunction : new
 
   // Declare the interface and environment
-  virtual intf_wb intf;  // Make sure intf_wb is defined elsewhere
+  virtual intf_wb intf;  
   environment env;       
 
   // Uncomment and implement the build_phase function if needed
@@ -23,6 +23,25 @@ class test_basic extends uvm_test;
 
     // Set the virtual interface in the config database
     uvm_config_db #(virtual intf_wb)::set(null, "uvm_test_top.*", "VIRTUAL_INTERFACE", intf);
-  endfunction : build_phase
+  endfunction
+  
+
+  
+  virtual function void end_of_elaboration_phase(uvm_phase phase);
+	uvm_report_info(get_full_name(),"End_of_elaboration", UVM_LOW);
+    print(); 
+  endfunction : end_of_elaboration_phase
+  
+  init_params_item v_seq;
+  
+  task run_phase(uvm_phase phase);
+    phase.raise_objection(this);
+    v_seq = init_params_item::type_id::create("v_seq");  
+    v_seq.start(env.v_seqr);    
+    
+    phase.drop_objection(this);
+  endtask
+  
+  
 
 endclass
