@@ -14,15 +14,26 @@ class scoreboard extends uvm_scoreboard;
 		super.new (name, parent);
   endfunction
   
-  function void build_phase (uvm_phase phase);
-    super.build_phase(phase);
-    mon = new ("mon", this);    
-        //drv = new ("drv", this);
-  endfunction
+  uvm_analysis_imp_drv #(driver, scoreboard) fifo_drv;
+  uvm_analysis_imp_mon #(driver, scoreboard) fifo_mon;
+
+    logic [7:0] ref_model [$];  
+  
+	function void build_phase (uvm_phase phase);
+      fifo_drv = new ("fifo_drv", this);
+      fifo_mon = new ("fifo_mon", this);
+	endfunction
+
+ ///WIP   not ready yet
+
+	virtual function void check_phase (uvm_phase phase);
+      if(ref_model.size() > 0)
+        `uvm_warning("SB Warn", $sformatf("FIFO not empty at check phase. Fifo still has 0x%0h data items allocated", ref_model.size()));
+	endfunction
 
   
   
-  ///WIP   not ready yet
+ 
 
 
 
