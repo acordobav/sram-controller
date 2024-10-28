@@ -4,20 +4,23 @@
 class scoreboard extends uvm_scoreboard;
   `uvm_component_utils (scoreboard)
 
+  int ErrCnt = 0; // Contador errores
+
+  uvm_analysis_imp#(sdram_item, scoreboard) mon;
+  
+  //uvm_analysis_imp_drv #(driver, scoreboard) drv;
+
   function new (string name, uvm_component parent=null);
 		super.new (name, parent);
   endfunction
   
-  
-  uvm_analysis_imp_drv #(driver, scoreboard) drv;
-  uvm_analysis_imp_mon #(driver, scoreboard) mon;
-
-  
   function void build_phase (uvm_phase phase);
-        drv = new ("drv", this);
-        mon = new ("mon", this);
+    super.build_phase(phase);
+    mon = new ("mon", this);    
+        //drv = new ("drv", this);
   endfunction
 
+  
   
   ///WIP   not ready yet
 
