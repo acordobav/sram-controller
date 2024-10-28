@@ -6,7 +6,7 @@ class environment extends uvm_env;
   scoreboard sb;
 
   //Driver
-  sdram_driver drv;
+  driver drv;
 
   //Sequencers
   //init_params_sequencer v_seqr;

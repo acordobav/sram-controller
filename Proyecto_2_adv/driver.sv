@@ -32,19 +32,19 @@ class driver extends uvm_driver#(sdram_item);
 
 			case(req.get_type_name())
 
-				"init_params_item" begin:
+				"init_params_item": begin
 					init_params_item init_tr = init_params_item::type_id::create("init_tr");
           			init_tr.copy(req);
           			init_param(init_tr);
 				end
 
-				"write_data_item" begin:
+				"write_data_item": begin
 					write_data_item write_tr = write_data_item::type_id::create("write_tr");
           			write_tr.copy(req);
           			burst_write(write_tr);
 				end
 
-				"read_data_item" begin:
+				"read_data_item": begin
 					read_data_item read_tr = read_data_item::type_id::create("read_tr");
           			read_tr.copy(req);
 					burst_read(read_tr);
@@ -89,7 +89,7 @@ class driver extends uvm_driver#(sdram_item);
 		end
     endtask
 					
-	task reset_test(input sys_clk);
+	task reset_test();
 		$display("[Driver] Executing Reset");
 		begin 
 		ErrCnt             = 0;

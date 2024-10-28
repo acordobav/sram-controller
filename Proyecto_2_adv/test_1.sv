@@ -6,8 +6,8 @@ class test_1 extends uvm_test;
 
   //Items Sqc
   init_params_item init_item;
-  write_item write_item;
-  read_item read_item;
+  write_data_item write_item;
+  read_data_item read_item;
   t_delay_item delay_item;
 
   function new(string name = "test_1", uvm_component parent = null);
@@ -35,15 +35,13 @@ class test_1 extends uvm_test;
     print(); 
   endfunction : end_of_elaboration_phase
   
-  init_params_item v_seq;
-  
   //Execution phase
   virtual task run_phase(uvm_phase phase);
     phase.raise_objection(this);
 
     init_item = init_params_item::type_id::create("init_item");
-    write_item = write_item::type_id::create("write_item");
-    read_item = read_item::type_id::create("read_item");
+    write_item = write_data_item::type_id::create("write_item");
+    read_item = read_data_item::type_id::create("read_item");
     delay_item = t_delay_item::type_id::create("delay_item");
 
     //Init Module Params
