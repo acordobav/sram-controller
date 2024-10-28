@@ -1,7 +1,14 @@
-program testcase(intf_wb intf);
+class test_basic2 extends test_basic;
+
+  `uvm_component_utils(test_basic2)
+ 
+  function new(string name = "test_basic2", uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new  
+  
+  
   environment env = new(intf);
   stimulus sti;
-  
   int k;
 
   initial
@@ -47,7 +54,7 @@ program testcase(intf_wb intf);
      $finish;
   
 end 
-endprogram
+endclass
 
 
 function int tiempo();
