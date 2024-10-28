@@ -1,4 +1,4 @@
-class test_basic2 extends test_basic;
+class test_basic2 extends test_1;
 
   `uvm_component_utils(test_basic2)
  
