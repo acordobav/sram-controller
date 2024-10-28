@@ -126,6 +126,9 @@ class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
     start_item(delay_tr);
     if (!delay_tr.randomize()) `uvm_error("SEQ_ERR", "Error while randomizing delay_tr");
 	  finish_item(delay_tr);
+    //Delay has been randomized here
+    $display("[Driver] SDRAM Column Depth: %d",delay_tr.t_delay);
+    #(delay_tr.t_delay);
   endtask
 
 endclass

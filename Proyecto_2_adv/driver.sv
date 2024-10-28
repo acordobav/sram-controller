@@ -50,16 +50,6 @@ class driver extends uvm_driver#(sdram_item);
 					burst_read(read_tr);
 				end
 
-				"t_delay_item" begin:
-					t_delay_item delay_tr = t_delay_item::type_id::create("delay_tr");
-					delay_tr.copy(req);
-					delay_controller(delay_tr);
-				end
-
-				"reset_item" begin:
-					reset_test();
-				end
-
 				default: `uvm_error("DRIVER", $sformatf("Unknown Sequence item %s", req.get_type_name()))
 			endcase
 
@@ -99,7 +89,7 @@ class driver extends uvm_driver#(sdram_item);
 		end
     endtask
 					
-	task reset_test();
+	task reset_test(input sys_clk);
 		$display("[Driver] Executing Reset");
 		begin 
 		ErrCnt             = 0;
@@ -189,10 +179,6 @@ class driver extends uvm_driver#(sdram_item);
 			intf.wb_we_i         = 'hx;
 			intf.wb_addr_i       = 'hx;
 			end
-	endtask
-	
-	task delay_controller();
-		$display("[Driver] Executing Delay");
 	endtask
 
 endclass
