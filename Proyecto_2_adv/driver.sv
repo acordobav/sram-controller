@@ -1,58 +1,108 @@
 parameter      dw              = 32;  // data width
 
-class driver;  // Generates the commands for SDRAM controller
-	stimulus sti;
-	scoreboard sb;
+class driver extends uvm_driver#(sdram_item);
+	`uvm_component_utils(driver)
+
+	virtual intf_wb intf; // Instances - Create intf object
+	scoreboard sb;	
 
 	reg [31:0] ErrCnt;
 	parameter P_SYS  = 10;     //    200MHz
 	parameter P_SDR  = 20;     //    100MHz
 
-	virtual intf_wb intf; // Instances - Create intf object
-
-	function new(virtual intf_wb intf, scoreboard sb); // Constructor
-		this.intf = intf;
-		this.sb = sb;
+	function new(string name = "driver", uvm_component_parent = null);
+		super.new(name, parent);
 	endfunction
 
-    task init_param(input sys_clk);
-	  begin
-        sti = new();
-        sti.randomize();
-        
-        intf.Req_Depth    = sti.Req_Depth;
-        intf.SDR_Enable   = sti.SDR_Enable;
-        intf.SDR_Mode_Reg = sti.SDR_Mode_Reg;
-        intf.SDR_tras_d   = sti.SDR_tras_d;
-        intf.SDR_trp_d    = sti.SDR_trp_d;
-        intf.SDR_trcd_d   = sti.SDR_trcd_d;
-        intf.SDR_cas      = sti.SDR_cas;
-        intf.SDR_trcar_d  = sti.SDR_trcar_d;
-        intf.SDR_twr_d    = sti.SDR_twr_d;
-        intf.SDR_rf_sh    = sti.SDR_rf_sh;
-        intf.SDR_rf_max   = sti.SDR_rf_max;
-        
-        $display("[Driver] Parameters being used");
-        $display("[Driver] SDRAM Column Depth:                                                  0x%h",sti.Req_Depth);
-        $display("[Driver] SDRAM Controller Enable:                                             0x%h",sti.SDR_Enable);
-        $display("[Driver] SDRAM Mode Register:                                                 0x%h",sti.SDR_Mode_Reg);
-        $display("[Driver] SDRAM Active to Precharge:                                           0x%h",sti.SDR_tras_d);
-        $display("[Driver] SDRAM Precharge Command Period:                                      0x%h",sti.SDR_trp_d);
-        $display("[Driver] SDRAM Active to Read or Write Delay:                                 0x%h",sti.SDR_trcd_d);
-        $display("[Driver] SDRAM CAS Latency:                                                   0x%h",sti.SDR_cas);
-        $display("[Driver] SDRAM Active to active/auto-refresh command period:                  0x%h",sti.SDR_trcar_d);
-        $display("[Driver] SDRAM Write Recovery time:                                           0x%h",sti.SDR_twr_d);
-        $display("[Driver] SDRAM Period between auto-refresh commands issued by the controller: 0x%h",sti.SDR_rf_sh);
-        $display("[Driver] SDRAM Maximum number of rows to be refreshed at a time:              0x%h",sti.SDR_rf_max);
-      
-      end
+	// Interfaz y Scoreboard init
+	function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		if (!uvm_config_db #(virtual intf_wb)::get(this, "", "VIRTUAL_INTERFACE", intf))
+    		`uvm_fatal("INTERFACE_CONNECT", "Could not get from the database the virtual interface for the TB")
+		if (!uvm_config_db #(scoreboard)::get(this, "", "SCOREBOARD", sb))
+    		`uvm_fatal("SCOREBOARD_CONNECT", "Could not get from the database the scoreboard for the TB")
+	endfunction
+	
+	task run_phase(uvm_phase phase);
+		sdram_item req;
+
+		forever begin
+			//Init Transaction
+			seq_item_port.get_next_item(req);
+
+			case(req.get_type_name())
+
+				"init_params_item" begin:
+					init_params_item init_tr = init_params_item::type_id::create("init_tr");
+          			init_tr.copy(req);
+          			init_param(init_tr);
+				end
+
+				"write_data_item" begin:
+					write_data_item write_tr = write_data_item::type_id::create("write_tr");
+          			write_tr.copy(req);
+          			burst_write(write_tr);
+				end
+
+				"read_data_item" begin:
+					read_data_item read_tr = read_data_item::type_id::create("read_tr");
+          			read_tr.copy(req);
+					burst_read(read_tr);
+				end
+
+				"t_delay_item" begin:
+					t_delay_item delay_tr = t_delay_item::type_id::create("delay_tr");
+					delay_tr.copy(req);
+					delay_controller(delay_tr);
+				end
+
+				"reset_item" begin:
+					reset_test();
+				end
+
+				default: `uvm_error("DRIVER", $sformatf("Unknown Sequence item %s", req.get_type_name()))
+			endcase
+
+			//End Transaction
+			seq_item_port.item_done();
+		end
+	endtask
+
+    task init_param(init_params_item req);
+		$display("[Driver] Init SDRAM PARAMETERS");
+		begin
+			intf.Req_Depth    = req.Req_Depth;
+			intf.SDR_Enable   = req.SDR_Enable;
+			intf.SDR_Mode_Reg = req.SDR_Mode_Reg;
+			intf.SDR_tras_d   = req.SDR_tras_d;
+			intf.SDR_trp_d    = req.SDR_trp_d;
+			intf.SDR_trcd_d   = req.SDR_trcd_d;
+			intf.SDR_cas      = req.SDR_cas;
+			intf.SDR_trcar_d  = req.SDR_trcar_d;
+			intf.SDR_twr_d    = req.SDR_twr_d;
+			intf.SDR_rf_sh    = req.SDR_rf_sh;
+			intf.SDR_rf_max   = req.SDR_rf_max;
+			
+			$display("[Driver] Parameters being used");
+			$display("[Driver] SDRAM Column Depth:                                                  0x%h",req.Req_Depth);
+			$display("[Driver] SDRAM Controller Enable:                                             0x%h",req.SDR_Enable);
+			$display("[Driver] SDRAM Mode Register:                                                 0x%h",req.SDR_Mode_Reg);
+			$display("[Driver] SDRAM Active to Precharge:                                           0x%h",req.SDR_tras_d);
+			$display("[Driver] SDRAM Precharge Command Period:                                      0x%h",req.SDR_trp_d);
+			$display("[Driver] SDRAM Active to Read or Write Delay:                                 0x%h",req.SDR_trcd_d);
+			$display("[Driver] SDRAM CAS Latency:                                                   0x%h",req.SDR_cas);
+			$display("[Driver] SDRAM Active to active/auto-refresh command period:                  0x%h",req.SDR_trcar_d);
+			$display("[Driver] SDRAM Write Recovery time:                                           0x%h",req.SDR_twr_d);
+			$display("[Driver] SDRAM Period between auto-refresh commands issued by the controller: 0x%h",req.SDR_rf_sh);
+			$display("[Driver] SDRAM Maximum number of rows to be refreshed at a time:              0x%h",req.SDR_rf_max);
+			
+		end
     endtask
 					
-	task reset_test(input sys_clk); 
-
+	task reset_test();
 		$display("[Driver] Executing Reset");
 		begin 
-		ErrCnt        = 0;
+		ErrCnt             = 0;
 		intf.wb_addr_i     = 0;
 		intf.wb_dat_i      = 0;
 		intf.wb_sel_i      = 4'h0;
@@ -73,38 +123,36 @@ class driver;  // Generates the commands for SDRAM controller
 		#500;
 		$display("[Driver] Finish Reset");
 		end
-		
 	endtask
 
+	task burst_write(write_data_item req);
+		input [31:0] Address;
+		input [7:0]  bl;
+		int i;
+		begin
+			//sti = new();
+			sb.afifo.push_back(Address);
+			sb.bfifo.push_back(bl);
+		
+			@ (negedge intf.sys_clk);
+				$display("[Driver] Write Address: %x, Burst Size: %d",Address,bl);
 
-	task burst_write;
-	input [31:0] Address;
-	input [7:0]  bl;
-	int i;
-	begin
-		sti = new();
-		sb.afifo.push_back(Address);
-		sb.bfifo.push_back(bl);
-	
-		@ (negedge intf.sys_clk);
-			$display("[Driver] Write Address: %x, Burst Size: %d",Address,bl);
+			for(i=0; i < bl; i++) begin
+				//sti.randomize();
+				intf.wb_stb_i        = 1;
+				intf.wb_cyc_i        = 1;
+				intf.wb_we_i         = 1;
+				intf.wb_sel_i        = 4'b1111;
+				intf.wb_addr_i       = Address[31:2]+i;
+				intf.wb_dat_i        = req.data; //$random & 32'hFFFFFFFF;
+				sb.set(intf.wb_addr_i, intf.wb_dat_i);
 
-		for(i=0; i < bl; i++) begin
-			sti.randomize();
-			intf.wb_stb_i        = 1;
-			intf.wb_cyc_i        = 1;
-			intf.wb_we_i         = 1;
-			intf.wb_sel_i        = 4'b1111;
-			intf.wb_addr_i       = Address[31:2]+i;
-			intf.wb_dat_i        = sti.data; //$random & 32'hFFFFFFFF;
-			sb.set(intf.wb_addr_i, intf.wb_dat_i);
+				do begin
+					@ (posedge intf.sys_clk);
+				end while(intf.wb_ack_o == 1'b0);
+					@ (negedge intf.sys_clk);
 
-			do begin
-				@ (posedge intf.sys_clk);
-			end while(intf.wb_ack_o == 1'b0);
-				@ (negedge intf.sys_clk);
-
-			$display("Status: Burst-No: %d  Write Address: %x  WriteData: %x ",i,intf.wb_addr_i,intf.wb_dat_i);
+				$display("Status: Burst-No: %d  Write Address: %x  WriteData: %x ",i,intf.wb_addr_i,intf.wb_dat_i);
 			end
 			intf.wb_stb_i        = 0;
 			intf.wb_cyc_i        = 0;
@@ -115,8 +163,7 @@ class driver;  // Generates the commands for SDRAM controller
 		end
 	endtask
 
-
-	task burst_read;
+	task burst_read(read_data_item req);
 		reg [31:0] Address;
 		reg [7:0]  bl;
 
@@ -143,5 +190,9 @@ class driver;  // Generates the commands for SDRAM controller
 			intf.wb_addr_i       = 'hx;
 			end
 	endtask
-		
-	endclass
+	
+	task delay_controller();
+		$display("[Driver] Executing Delay");
+	endtask
+
+endclass

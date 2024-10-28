@@ -1,4 +1,14 @@
-class init_params_item extends uvm_sequence;
+// Esta sera la clase principal
+// De esta heredaran las otras secuencias que deban definirse
+class sdram_item extends uvm_sequence_item;
+  `uvm_object_utils(sdram_item)
+
+  function new(string name = "sdram_item");
+    super.new(name);
+  endfunction
+endclass
+
+class init_params_item extends sdram_item;
   `uvm_object_utils(init_params_item)
 
   // Randomize Parameters of the module
@@ -33,7 +43,7 @@ class init_params_item extends uvm_sequence;
 
 endclass
 
-class write_data_item extends uvm_sequence_item;
+class write_data_item extends sdram_item;
   `uvm_object_utils(write_data_item)
 
   rand logic [31:0] Address;
@@ -52,7 +62,7 @@ class write_data_item extends uvm_sequence_item;
 
 endclass
 
-class read_data_item extends uvm_sequence_item;
+class read_data_item extends sdram_item;
   `uvm_object_utils(read_data_item)
 
   rand logic [31:0] Address;
@@ -66,7 +76,7 @@ class read_data_item extends uvm_sequence_item;
 
 endclass
 
-class t_delay_item extends uvm_sequence_item;
+class t_delay_item extends sdram_item;
   `uvm_object_utils(t_delay_item)
 
   // Random delays; no constraints by the moment
@@ -115,7 +125,7 @@ class sdram_controller_sequence extends uvm_sequence#(uvm_sequence_item);
     delay_tr = t_delay_item::type_id::create("delay_tr");
     start_item(delay_tr);
     if (!delay_tr.randomize()) `uvm_error("SEQ_ERR", "Error while randomizing delay_tr");
-	finish_item(delay_tr);
+	  finish_item(delay_tr);
   endtask
 
 endclass
