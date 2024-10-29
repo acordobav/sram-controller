@@ -1,0 +1,4 @@
+  CREATE_STREAM @0.0 ns {NAME:v_seq T:Transactions SCOPE:uvm_test_top.env.virtual_seqr STREAM:1140}
+  CREATE_STREAM @0.0 ns {NAME:seq1 T:Transactions SCOPE:uvm_test_top.env.init_params_ag.init_params_seqr STREAM:1149}
+  CREATE_STREAM @0.0 ns {NAME:seq2 T:Transactions SCOPE:uvm_test_top.env.reset_ag.reset_seqr STREAM:1177}
+  CREATE_STREAM @13590.0 ns {NAME:seq3 T:Transactions SCOPE:uvm_test_top.env.sram_ag.sram_seqr STREAM:1254}

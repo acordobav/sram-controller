@@ -1,0 +1,27 @@
+$date
+	Tue Oct 29 04:43:01 2024
+$end
+
+$version
+	Synopsys VCS version U-2023.03-SP2_Full64
+$end
+
+$timescale
+	1ps
+$end
+
+$comment Csum: 1 dec3da96570ee65b $end
+
+
+$scope module top_hdl $end
+
+$scope begin unnamed$$_vcs_4 $end
+$upscope $end
+
+$upscope $end
+
+$enddefinitions $end
+
+#0
+$dumpvars
+$end
