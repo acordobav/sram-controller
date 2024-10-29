@@ -7,7 +7,7 @@ class agent_fifo_active extends uvm_agent;
   virtual intf_wb intf;
   driver drv;  //fifo driver
   init_params_sequencer seqr;
-  monitor_wr mntr_wr;
+  sdram_monitor_wr mntr_wr;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -20,7 +20,7 @@ class agent_fifo_active extends uvm_agent;
     
     seqr = init_params_sequencer::type_id::create("seqr", this);
     
-    mntr_wr = monitor_wr::type_id::create ("mntr_wr", this);
+    mntr_wr = sdram_monitor_wr::type_id::create ("mntr_wr", this);
     
     //uvm_config_db #(virtual fifo_intf)::set (null, "uvm_test_top.env.fifo_ag.fifo_drv", "VIRTUAL_INTERFACE", intf);    
 
@@ -43,7 +43,7 @@ class agent_fifo_passive extends uvm_agent;
   
   virtual intf_wb intf;
   
-  fifo_monitor_rd fifo_mntr_rd;  //MODIFY according with JuanPa
+  sdram_monitor_rd mntr_rd;  //MODIFY according with JuanPa
   
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -52,7 +52,7 @@ class agent_fifo_passive extends uvm_agent;
       `uvm_fatal("INTERFACE_CONNECT", "Could not get from the database the virtual interface for the TB")
     end
     
-    fifo_mntr_rd = fifo_monitor_rd::type_id::create ("fifo_mntr_rd", this); // //MODIFY according with JuanPa
+    mntr_rd = sdram_monitor_rd::type_id::create ("mntr_rd", this); // //MODIFY according with JuanPa
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);
