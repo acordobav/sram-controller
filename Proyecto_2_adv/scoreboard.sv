@@ -1,68 +1,57 @@
 `uvm_analysis_imp_decl( _drv )
 `uvm_analysis_imp_decl( _mon ) 
 
+// Create a class that extends from uvm_scoreboard
 class scoreboard extends uvm_scoreboard;
   `uvm_component_utils (scoreboard)
-
-  int ErrCnt = 0; // Contador errores
-
-  uvm_analysis_imp#(sdram_item, scoreboard) mon;
-  
-  //uvm_analysis_imp_drv #(driver, scoreboard) drv;
 
   function new (string name, uvm_component parent=null);
 		super.new (name, parent);
   endfunction
-  
-  uvm_analysis_imp_drv #(driver, scoreboard) fifo_drv;
-  uvm_analysis_imp_mon #(driver, scoreboard) fifo_mon;
 
-    logic [7:0] ref_model [$];  
-  
+  // Declare and create TLM Analysis Ports to receive data objects from other TB components
+  uvm_analysis_imp_drv #(sdram_item, scoreboard) fifo_drv;  // Driver
+  uvm_analysis_imp_mon #(sdram_item, scoreboard) fifo_mon;  // Monitor
+
+  // Reference model
+  int afifo[$];    // address fifo
+  int bfifo[$];    // Burst Length fifo
+  int memory[int]; // Declare an associative array which will model the memory
+  int ErrCnt = 0;  // Error counter
+
+  // Instantiate the analysis ports
 	function void build_phase (uvm_phase phase);
-      fifo_drv = new ("fifo_drv", this);
-      fifo_mon = new ("fifo_mon", this);
+    fifo_drv = new ("fifo_drv", this);
+    fifo_mon = new ("fifo_mon", this);
 	endfunction
 
- ///WIP   not ready yet
-
-	virtual function void check_phase (uvm_phase phase);
-      if(ref_model.size() > 0)
-        `uvm_warning("SB Warn", $sformatf("FIFO not empty at check phase. Fifo still has 0x%0h data items allocated", ref_model.size()));
+  // write function used by the driver
+  virtual function void write_drv (sdram_item item);
+    `uvm_info ("scoreboard", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
+    memory[item.address] = item.data;
 	endfunction
 
-  
-  
- 
-
-
-
-  /*
-  int afifo[$]; // address  fifo
-  int bfifo[$]; // Burst Length fifo
-
-  // Declare an associative array which will model the memory  
-  int memory[int];
-  
-  // Constructor (optional, here for clarity)
-  function new();
-    // Can initialize any default values if needed
-  endfunction
-
-  // Method to set the value of an address
-  function void set(int address, int value);
-    memory[address] = value;
-  endfunction
- 
-  // Method to retrieve a value by address
-  function int get(int address);
-    if (memory.exists(address)) begin
-      return memory[address];
+  // write function used by the monitor
+  virtual function void write_mon(sdram_item item);
+    `uvm_info ("scoreboard", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
+    
+    // Check address was used
+    if (!memory.exists(address)) begin
+      `uvm_error ("scoreboard", $sformatf("Address received =  0x%0h was not used", item.address))
+      ErrCnt = ErrCnt + 1;
     end
     else begin
-      $display("Warning: address %X not found in memory", address);
-      return -1;  // Return -1 if address doesn't exist
+      // Address was accessed at some point, check its value
+      int exp_data = memory[item.address]
+      if (exp_data !== item.data) begin
+        `uvm_error ("scoreboard", $sformatf("On address 0x%0h the expected value is 0x%0h, instead got 0x%0h", item.address, exp_data, item.data))
+        ErrCnt = ErrCnt + 1;
+      end
     end
-  endfunction*/
-  
+  endfunction
+
+	virtual function void check_phase (uvm_phase phase);
+
+	endfunction
+
 endclass
