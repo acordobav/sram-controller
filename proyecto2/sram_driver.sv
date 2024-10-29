@@ -32,6 +32,9 @@ class gen_sram_item_seq extends uvm_sequence;
   
   virtual task body();
     sram_item s_item = sram_item::type_id::create("s_item");
+    
+    `uvm_info("sequencer", $sformatf("Generate %d sram_items",num), UVM_LOW)
+    
     for (int i = 0; i < num; i ++) begin
         start_item(s_item);
     	s_item.randomize();
@@ -73,6 +76,7 @@ class sram_driver extends uvm_driver #(sram_item);
       `uvm_info("DRV", $sformatf("Wait for item from sequencer"), UVM_LOW)
       seq_item_port.get_next_item(s_item);
       write(s_item);
+      read(s_item);
       seq_item_port.item_done();
     end
   endtask
@@ -80,8 +84,7 @@ class sram_driver extends uvm_driver #(sram_item);
   virtual task write(sram_item s_item);
     begin
       @ (negedge intf.sys_clk);
-      $display("[Driver] Write Address: 0x%0h, Data: 0x%0h", s_item.address, s_item.data);
-
+      `uvm_info("sram_driver", $sformatf("Write Address: 0x%0h, Data: 0x%0h", s_item.address, s_item.data), UVM_LOW)
       intf.wb_stb_i        = 1;
       intf.wb_cyc_i        = 1;
       intf.wb_we_i         = 1;
@@ -94,8 +97,6 @@ class sram_driver extends uvm_driver #(sram_item);
       end while(intf.wb_ack_o == 1'b0);
       @ (negedge intf.sys_clk);
 
-      $display("Status: Write Address: 0x%0h  WriteData: 0x%0h",intf.wb_addr_i, intf.wb_dat_i);
-
       intf.wb_stb_i        = 0;
       intf.wb_cyc_i        = 0;
       intf.wb_we_i         = 'hx;
@@ -105,7 +106,30 @@ class sram_driver extends uvm_driver #(sram_item);
     end
   endtask
   
-  
+  virtual task read(sram_item s_item);
+    begin
+      @(negedge intf.sys_clk);
+      `uvm_info("sram_driver", $sformatf("Read Address: 0x%0h", s_item.address), UVM_LOW)
+      
+      intf.wb_stb_i        = 1;
+      intf.wb_cyc_i        = 1;
+      intf.wb_we_i         = 0;
+      intf.wb_addr_i       = s_item.address;
+      
+      do begin
+        @ (posedge intf.sys_clk);
+      end while(intf.wb_ack_o == 1'b0);
+      @ (negedge intf.sdram_clk);
+      
+      intf.wb_stb_i        = 0;
+      intf.wb_cyc_i        = 0;
+      intf.wb_we_i         = 'hx;
+      intf.wb_addr_i       = 'hx;
+      
+    end
+    
+    
+  endtask
   
   
   

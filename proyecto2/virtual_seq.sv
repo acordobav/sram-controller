@@ -3,7 +3,6 @@ class virtual_sequence extends uvm_sequence;
   `uvm_declare_p_sequencer(virtual_sequencer)
   
   rand logic [14:0] t_delay;
-  int num_repeats =2;
   
   function new(string name="virtual_sequence");
     super.new(name);
@@ -35,12 +34,11 @@ class virtual_sequence extends uvm_sequence;
     
     t_delay=t_f(); // to randomize t_delay 
     #t_delay;
-    
-    for (int i = 0; i < num_repeats; i++) begin
-      seq3 = gen_sram_item_seq::type_id::create("seq3");
-      seq3.randomize();
-      seq3.start(p_sequencer.sram_seqr);
-    end
+      
+    seq3 = gen_sram_item_seq::type_id::create("seq3");
+    seq3.randomize();
+    seq3.start(p_sequencer.sram_seqr);
+    #t_delay;
   endtask
 endclass
 

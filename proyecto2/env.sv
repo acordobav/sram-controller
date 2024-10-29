@@ -11,6 +11,7 @@ class environment extends uvm_env;
   init_params_agent init_params_ag;
   reset_agent reset_ag;
   agent_sram_active sram_ag;
+  agent_sram_passive sram_ag_passive;
   scoreboard sram_sb;
   virtual_sequencer virtual_seqr;
   
@@ -25,6 +26,7 @@ class environment extends uvm_env;
     init_params_ag = init_params_agent::type_id::create ("init_params_ag", this);
     reset_ag = reset_agent::type_id::create ("reset_ag", this);
     sram_ag = agent_sram_active::type_id::create ("sram_ag", this);
+    sram_ag_passive = agent_sram_passive::type_id::create ("sram_ag_passive", this);
     sram_sb = scoreboard::type_id::create ("sram_sb", this);
     virtual_seqr = virtual_sequencer::type_id::create ("virtual_seqr", this);
       
@@ -35,7 +37,8 @@ class environment extends uvm_env;
   
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    sram_ag.mntr_wr.mon_analysis_port.connect(sram_sb.sram_drv); 
+    sram_ag.mntr_wr.mon_analysis_port.connect(sram_sb.sram_drv);
+    sram_ag_passive.mntr_rd.mon_analysis_port.connect(sram_sb.sram_mon);
     virtual_seqr.reset_seqr = reset_ag.reset_seqr;
     virtual_seqr.init_params_seqr = init_params_ag.init_params_seqr;
     virtual_seqr.sram_seqr = sram_ag.sram_seqr;

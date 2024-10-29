@@ -56,4 +56,3 @@
 `include "mt48lc2m32b2.v"
 
 `include "test_1.sv"
-//`include "test_2.sv"  

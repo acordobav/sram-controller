@@ -27,25 +27,28 @@ class scoreboard extends uvm_scoreboard;
 
   // write function used by the driver
   virtual function void write_drv (sram_item item);
-    `uvm_info ("scoreboard", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
+    `uvm_info ("scoreboard (driver)", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
     memory[item.address] = item.data;
 	endfunction
 
   // write function used by the monitor
   virtual function void write_mon(sram_item item);
-    `uvm_info ("scoreboard", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
+    `uvm_info ("scoreboard (monitor)", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
     
     // Check address was used
     if (!memory.exists(item.address)) begin
-      `uvm_error ("scoreboard", $sformatf("Address received =  0x%0h was not used", item.address))
+      `uvm_error ("scoreboard (monitor)", $sformatf("Address received =  0x%0h was not used", item.address))
       ErrCnt = ErrCnt + 1;
     end
     else begin
       // Address was accessed at some point, check its value
       int exp_data = memory[item.address];
       if (exp_data !== item.data) begin
-        `uvm_error ("scoreboard", $sformatf("On address 0x%0h the expected value is 0x%0h, instead got 0x%0h", item.address, exp_data, item.data))
+        `uvm_error ("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h the expected value is 0x%0h, instead got 0x%0h", item.address, exp_data, item.data))
         ErrCnt = ErrCnt + 1;
+      end
+      else begin
+        `uvm_info ("scoreboard (monitor)", $sformatf("SUCCEED | address: 0x%0h exp_value: 0x%0h actual: 0x%0h", item.address, exp_data, item.data), UVM_NONE)
       end
     end
   endfunction

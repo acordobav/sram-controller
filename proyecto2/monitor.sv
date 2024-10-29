@@ -72,9 +72,7 @@ class sdram_monitor_rd extends sdram_monitor;
       @(posedge intf.sys_clk); // Sincronización con el reloj de la interfaz
 
       // Monitorea la transacción de lectura
-      if (intf.wb_stb_i && intf.wb_cyc_i && !intf.wb_we_i) begin // Verifica que sea lectura
-        // Espera el acknowledgment antes de capturar los datos
-        @(posedge intf.wb_ack_o);
+      if (intf.wb_ack_o == 1'b1 && intf.wb_we_i == 1'b0)begin
         
         item.address = intf.wb_addr_i; // Captura la dirección
         item.data = intf.wb_dat_o; // Captura los datos de salida del bus
