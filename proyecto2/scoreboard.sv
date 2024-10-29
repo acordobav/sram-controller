@@ -50,12 +50,15 @@ class scoreboard extends uvm_scoreboard;
     end
   endfunction
 
-	virtual function void check_phase (uvm_phase phase);
-	  if (ErrCnt == 0) begin
-        `uvm_info("sram_monitor", "STATUS: SDRAM Write/Read TEST PASSED", UVM_NONE)
-      end else begin
-        `uvm_error("sram_monitor", $sformatf("ERROR: SDRAM Write/Read TEST FAILED with %0d errors", ErrCnt))
-      end
-	endfunction
+// end of test logic
+  virtual function void check_phase (uvm_phase phase);
+    `uvm_info("scoreboard", "#######################################", UVM_NONE)
+    if (ErrCnt == 0) begin
+      `uvm_info("sram_monitor", "STATUS: SDRAM Write/Read TEST PASSED", UVM_NONE)
+    end else begin
+      `uvm_error("sram_monitor", $sformatf("ERROR: SDRAM Write/Read TEST FAILED with %0d errors", ErrCnt))
+    end
+    `uvm_info("scoreboard", "#######################################", UVM_NONE)
+  endfunction
 
 endclass
