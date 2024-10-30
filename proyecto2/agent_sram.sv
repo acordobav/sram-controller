@@ -21,14 +21,12 @@ class agent_sram_active extends uvm_agent;
     sram_seqr = sram_sequencer::type_id::create("sram_seqr", this);
     
     mntr_wr = sdram_monitor_wr::type_id::create ("mntr_wr", this);
-    
-    //uvm_config_db #(virtual fifo_intf)::set (null, "uvm_test_top.env.fifo_ag.fifo_drv", "VIRTUAL_INTERFACE", intf);    
 
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    sram_drv.seq_item_port.connect(sram_seqr.seq_item_export); //review this  MODIFY when Drivers ports are ready
+    sram_drv.seq_item_port.connect(sram_seqr.seq_item_export);
   endfunction
 
 endclass
@@ -42,7 +40,7 @@ class agent_sram_passive extends uvm_agent;
   
   virtual intf_wb intf;
   
-  sdram_monitor_rd mntr_rd;  //MODIFY according with JuanPa
+  sdram_monitor_rd mntr_rd;
   
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -51,7 +49,7 @@ class agent_sram_passive extends uvm_agent;
       `uvm_fatal("INTERFACE_CONNECT", "Could not get from the database the virtual interface for the TB")
     end
     
-    mntr_rd = sdram_monitor_rd::type_id::create ("mntr_rd", this); // //MODIFY according with JuanPa
+    mntr_rd = sdram_monitor_rd::type_id::create ("mntr_rd", this);
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);

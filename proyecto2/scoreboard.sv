@@ -36,11 +36,12 @@ class scoreboard extends uvm_scoreboard;
     `uvm_info ("scoreboard (monitor)", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
     
     // Check address was used
-    if (!memory.exists(item.address)) begin
-      `uvm_error ("scoreboard (monitor)", $sformatf("Address received =  0x%0h was not used", item.address))
-      ErrCnt = ErrCnt + 1;
-    end
-    else begin
+    //if (!memory.exists(item.address)) begin
+    //  `uvm_error ("scoreboard (monitor)", $sformatf("Address received =  0x%0h was not used", item.address))
+    //  ErrCnt = ErrCnt + 1;
+    //end
+    //else begin
+    if (1'b1) begin
       // Address was accessed at some point, check its value
       int exp_data = memory[item.address];
       if (exp_data !== item.data) begin

@@ -7,16 +7,11 @@
 // Prof. Gerardo Castro Jiménez 
 //
 //
-// 							Proyecto #1: 
-// Fecha de entrega: Martes 24 de septiembre del 2024, a las 6pm
+// 							Proyecto #2: 
+// Fecha de entrega: Martes 29 de octubre del 2024, a las 6:30pm
 //
 // Descripción: 
-// 	Crear un testbench basado en capas con los siguientes módulos:
-// 		a. Generación de estímulo.
-// 		b. Driver.
-// 		c. Scoreboard.
-// 		d. Monitor.
-// 		e. Checkers.
+// 	Crear un modelo de Verificación Funcional utilizando el estándar UVM 
 //
 // GR-02:
 // 		Jill Carranza

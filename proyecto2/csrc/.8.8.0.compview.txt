@@ -1,9 +1,9 @@
-{"vcs1":{"timestamp_begin":1730242895.998477404, "rt":19.14, "ut":18.44, "st":0.67}}
-{"vcselab":{"timestamp_begin":1730242915.227338129, "rt":0.52, "ut":0.38, "st":0.13}}
-{"link":{"timestamp_begin":1730242915.804727655, "rt":0.58, "ut":0.40, "st":0.20}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1730242895.162859608}
-{"VCS_COMP_START_TIME": 1730242895.162859608}
-{"VCS_COMP_END_TIME": 1730242916.501279038}
+{"vcs1":{"timestamp_begin":1730244848.824860671, "rt":18.86, "ut":18.19, "st":0.62}}
+{"vcselab":{"timestamp_begin":1730244867.775625974, "rt":0.46, "ut":0.33, "st":0.13}}
+{"link":{"timestamp_begin":1730244868.300248295, "rt":0.66, "ut":0.45, "st":0.20}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1730244847.976827889}
+{"VCS_COMP_START_TIME": 1730244847.976827889}
+{"VCS_COMP_END_TIME": 1730244869.095679561}
 {"VCS_USER_OPTIONS": "-full64 -licqueue +incdir+/apps/vcsmx/vcs/U-2023.03-SP2//etc/uvm-1.2/src /apps/vcsmx/vcs/U-2023.03-SP2//etc/uvm-1.2/src/uvm.sv /apps/vcsmx/vcs/U-2023.03-SP2//etc/uvm-1.2/src/dpi/uvm_dpi.cc -CFLAGS -DVCS -timescale=1ns/1ps +vcs+flush+all +warn=all -sverilog +define+S60 +define+VERBOSE +define+VCS -debug_access+all -cm line+tgl+assert +plusarg_save +UVM_TESTNAME=test_basic design.sv testbench.sv"}
-{"vcs1": {"peak_mem": 430200}}
-{"vcselab": {"peak_mem": 226432}}
+{"vcs1": {"peak_mem": 429280}}
+{"vcselab": {"peak_mem": 226444}}

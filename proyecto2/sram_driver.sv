@@ -41,7 +41,6 @@ class gen_sram_item_seq extends uvm_sequence;
     	`uvm_info("SEQ", $sformatf("Generate new item: "), UVM_LOW)
     	s_item.print();
         finish_item(s_item);
-        //`uvm_do(f_item);
     end
     `uvm_info("SEQ", $sformatf("Done generation of %0d items", num), UVM_LOW)
   endtask
