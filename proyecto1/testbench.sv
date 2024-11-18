@@ -31,13 +31,14 @@
 `define SDR_32BIT
 `define S60
 
-`include "top_hvl.sv"
 `include "interface.sv"
+`include "stimulus.sv"
+`include "scoreboard.sv"
 `include "driver.sv"
 `include "monitor.sv"
-`include "scoreboard.sv"
-`include "stimulus.sv"
 `include "env.sv"
 `include "mt48lc2m32b2.v"
+`include "top.sv"
+ 
 `include "test_1.sv"
 //`include "test_2.sv"  

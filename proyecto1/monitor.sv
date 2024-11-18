@@ -25,8 +25,7 @@ class monitor;
     forever begin
       @(posedge intf.sys_clk) begin
         if (intf.wb_ack_o == 1'b1 && intf.wb_we_i == 1'b0)begin
-          exp_data = sb.get(intf.wb_addr_i);
-          
+          exp_data = sb.dfifo.pop_front();
           if(intf.wb_dat_o !== exp_data) begin
                    $display("[Monitor] READ ERROR: Addr: %x Rxp: %x Exp: %x",intf.wb_addr_i,intf.wb_dat_o,exp_data);
              ErrCnt = ErrCnt+1;
