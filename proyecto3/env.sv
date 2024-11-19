@@ -18,7 +18,15 @@ class environment extends uvm_env;
   
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    
+  
+  `ifdef SDR_32BIT
+    `uvm_info("environment", $sformatf("Using 32 bit SRAM controller"), UVM_LOW)
+  `elsif SDR_16BIT 
+    `uvm_info("environment", $sformatf("Using 16 bit SRAM controller"), UVM_LOW)
+  `else 
+    `uvm_info("environment", $sformatf("Using 8 bit SRAM controller"), UVM_LOW)
+  `endif
+
     if(uvm_config_db #(virtual intf_wb)::get(this, "", "VIRTUAL_INTERFACE", intf) == 0) begin
       `uvm_fatal("INTERFACE_CONNECT", "Could not get from the database the virtual interface for the TB")
     end

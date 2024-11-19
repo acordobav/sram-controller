@@ -23,7 +23,6 @@
 
 
 `timescale 1ns/1ps
-`define SDR_32BIT
 `define S60
 
 `include "top_hvl.sv"
@@ -50,7 +49,14 @@
 //`include "coverage.sv"
 
 `include "env.sv"
+
+`ifdef SDR_32BIT
 `include "mt48lc2m32b2.v"
+`elsif SDR_16BIT 
+`include "IS42VM16400K.V"
+`else  // 8 BIT SDRAM
+`include "mt48lc8m8a2.v"
+`endif
 
 //`include "assertion.sv"
 

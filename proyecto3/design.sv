@@ -1,4 +1,7 @@
 `timescale 1ns / 1ps
+`define SDR_32BIT
+// `define SDR_16BIT
+// `define SDR_8BIT
 `include "sdrc_top.v"
 `include "wb2sdrc.v"
 `include "async_fifo.v"
