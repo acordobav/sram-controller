@@ -48,6 +48,7 @@ class environment extends uvm_env;
     super.connect_phase(phase);
     sram_ag.mntr_wr.mon_analysis_port.connect(sram_sb.sram_drv);
     sram_ag_passive.mntr_rd.mon_analysis_port.connect(sram_sb.sram_mon);
+    init_params_ag.mntr_ACR.mon_analysis_port.connect(sram_sb.sram_init);
     virtual_seqr.reset_seqr = reset_ag.reset_seqr;
     virtual_seqr.init_params_seqr = init_params_ag.init_params_seqr;
     virtual_seqr.sram_seqr = sram_ag.sram_seqr;

@@ -9,7 +9,8 @@ class init_params_agent extends uvm_agent;
   virtual intf_wb intf;
   init_params_driver init_params_drv;
   init_params_sequencer init_params_seqr;
-
+  monitor_ACR mntr_ACR;
+  
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     
@@ -20,7 +21,8 @@ class init_params_agent extends uvm_agent;
     init_params_drv = init_params_driver::type_id::create ("init_params_drv", this); 
     
     init_params_seqr = init_params_sequencer::type_id::create("init_params_seqr", this);   
-
+    mntr_ACR = monitor_ACR::type_id::create ("mntr_ACR", this);
+    
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);

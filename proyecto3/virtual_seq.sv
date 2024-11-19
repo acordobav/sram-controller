@@ -39,6 +39,20 @@ class virtual_sequence extends uvm_sequence;
     seq3.randomize();
     seq3.start(p_sequencer.sram_seqr);
     #t_delay;
+
+     seq1 = gen_init_params_item_seq::type_id::create("seq1");
+    
+    seq1.randomize();
+    seq1.start(p_sequencer.init_params_seqr);
+    
+    t_delay=t_f(); // to randomize t_delay 
+    #t_delay;
+    
+    seq2 = gen_reset_item_seq::type_id::create("seq2");
+    
+    seq2.randomize();
+    seq2.start(p_sequencer.reset_seqr);
+    
   endtask
 endclass
 

@@ -10,7 +10,7 @@ class sram_item extends uvm_sequence_item;
   rand logic [7:0]  data;
   rand logic [11:0] address;
 `endif
-
+  int time_ns;
   // Use utility macros to implement standard functions
   // like print, copy, clone, etc
   `uvm_object_utils_begin(sram_item)
