@@ -1,5 +1,5 @@
 `uvm_analysis_imp_decl( _drv )
-`uvm_analysis_imp_decl( _mon ) 
+`uvm_analysis_imp_decl( _mon )
 `uvm_analysis_imp_decl( _init ) 
 
 // Create a class that extends from uvm_scoreboard
@@ -7,7 +7,7 @@ class scoreboard extends uvm_scoreboard;
   `uvm_component_utils (scoreboard)
 
   function new (string name, uvm_component parent=null);
-		super.new (name, parent);
+    super.new (name, parent);
   endfunction
 
   // Declare and create TLM Analysis Ports to receive data objects from other TB components
@@ -27,10 +27,15 @@ class scoreboard extends uvm_scoreboard;
 	endfunction
 
   // write function used by the driver
-  virtual function void write_drv (sram_item item);
-    `uvm_info ("scoreboard (driver)", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
-    memory[item.address] = item.data;
-	endfunction
+  virtual function void write_drv(sram_item item);
+    `uvm_info("scoreboard (driver)", $sformatf("Data received = 0x%0h | Address received =  0x%0h", item.data, item.address), UVM_MEDIUM)
+
+    // Only update the bytes that are selected based on the 'sel' value
+    if (item.sel[0]) memory[item.address][7:0] = item.data[7:0];      // Byte 0
+    if (item.sel[1]) memory[item.address][15:8] = item.data[15:8];    // Byte 1
+    if (item.sel[2]) memory[item.address][23:16] = item.data[23:16];  // Byte 2
+    if (item.sel[3]) memory[item.address][31:24] = item.data[31:24];  // Byte 3
+  endfunction
 
   // write function used by the monitor
   virtual function void write_mon(sram_item item);
@@ -39,13 +44,31 @@ class scoreboard extends uvm_scoreboard;
     if (1'b1) begin
       // Address was accessed at some point, check its value
       int exp_data = memory[item.address];
-      if (exp_data !== item.data) begin
-        
-        `uvm_error ("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h the expected value is 0x%0h, instead got 0x%0h", item.address, exp_data, item.data))
-        ErrCnt = ErrCnt + 1;
+
+      // Only compare the bytes that are selected based on the 'sel' value
+      if (item.sel[0]) begin
+        if (exp_data[7:0] !== item.data[7:0]) begin
+          `uvm_error("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h, expected byte 0: 0x%0h, got 0x%0h", item.address, exp_data[7:0], item.data[7:0]))
+          ErrCnt = ErrCnt + 1;
+        end
       end
-      else begin
-        `uvm_info ("scoreboard (monitor)", $sformatf("SUCCEED | address: 0x%0h exp_value: 0x%0h actual: 0x%0h", item.address, exp_data, item.data), UVM_NONE)
+      if (item.sel[1]) begin
+        if (exp_data[15:8] !== item.data[15:8]) begin
+          `uvm_error("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h, expected byte 1: 0x%0h, got 0x%0h", item.address, exp_data[15:8], item.data[15:8]))
+          ErrCnt = ErrCnt + 1;
+        end
+      end
+      if (item.sel[2]) begin
+        if (exp_data[23:16] !== item.data[23:16]) begin
+          `uvm_error("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h, expected byte 2: 0x%0h, got 0x%0h", item.address, exp_data[23:16], item.data[23:16]))
+          ErrCnt = ErrCnt + 1;
+        end
+      end
+      if (item.sel[3]) begin
+        if (exp_data[31:24] !== item.data[31:24]) begin
+          `uvm_error("scoreboard (monitor)", $sformatf("FAILED | On address 0x%0h, expected byte 3: 0x%0h, got 0x%0h", item.address, exp_data[31:24], item.data[31:24]))
+          ErrCnt = ErrCnt + 1;
+        end
       end
     end
   endfunction

@@ -12,9 +12,10 @@ class environment extends uvm_env;
   reset_agent reset_ag;
   agent_sram_active sram_ag;
   agent_sram_passive sram_ag_passive;
+  spec_param_agent spec_param_ag;
   scoreboard sram_sb;
   virtual_sequencer virtual_seqr;
-  //funct_coverage cov;
+  funct_coverage cov;
   
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -36,8 +37,10 @@ class environment extends uvm_env;
     reset_ag = reset_agent::type_id::create ("reset_ag", this);
     sram_ag = agent_sram_active::type_id::create ("sram_ag", this);
     sram_ag_passive = agent_sram_passive::type_id::create ("sram_ag_passive", this);
+    spec_param_ag = spec_param_agent::type_id::create ("spec_param_ag", this);
     sram_sb = scoreboard::type_id::create ("sram_sb", this);
     virtual_seqr = virtual_sequencer::type_id::create ("virtual_seqr", this);
+    cov = funct_coverage::type_id::create("cov", this);
       
     uvm_report_info(get_full_name(),"End_of_build_phase", UVM_LOW);
     print();
@@ -52,6 +55,7 @@ class environment extends uvm_env;
     virtual_seqr.reset_seqr = reset_ag.reset_seqr;
     virtual_seqr.init_params_seqr = init_params_ag.init_params_seqr;
     virtual_seqr.sram_seqr = sram_ag.sram_seqr;
+    virtual_seqr.spec_param_seqr = spec_param_ag.spec_param_seqr;
   endfunction
   
 endclass
