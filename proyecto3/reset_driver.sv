@@ -65,24 +65,7 @@ class reset_driver extends uvm_driver #(reset_item);
   endtask
   
   virtual task reset_drive(reset_item n_reset);
-    $display("[Driver RST] Executing Reset");
-	//ErrCnt             = 0;
-    intf.wb_addr_i     = 0;
-    intf.wb_dat_i      = 0;
-    intf.wb_sel_i      = 4'h0;
-    intf.wb_we_i       = 0;
-    intf.wb_stb_i      = 0;
-    intf.wb_cyc_i      = 0;
-	//Seq of reset
-    intf.RESETN        = 1'h1;
-    #100;
-    intf.RESETN        = 1'h0;
-    #10000
-    intf.RESETN        = 1'h1;
-    #1000;
-    wait(intf.sdr_init_done == 1);
-    #500;
-    $display("[Driver RST] Finish Reset");
+    intf.reset();
   endtask
   
 endclass

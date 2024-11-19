@@ -45,21 +45,13 @@ class sdram_monitor_wr extends sdram_monitor;
 
   virtual task run_phase(uvm_phase phase);
     sram_item item = sram_item::type_id::create("item", this); // Crea un nuevo item para capturar datos
+    logic wr_op = 1'b0;
 
     forever begin
-      @(posedge intf.sys_clk); // Sincronización con el reloj de la interfaz
+      intf.mntr_wr(item.address, item.data, wr_op);
 
-      // Monitorea la transacción de escritura
-      if (intf.wb_stb_i && intf.wb_cyc_i && intf.wb_we_i) begin // Verifica que sea escritura
-        item.address = intf.wb_addr_i; // Captura la dirección
-        item.data = intf.wb_dat_i; // Captura los datos del bus
-
-        // Espera el acknowledgment para confirmar la escritura
-        @(posedge intf.wb_ack_o);
-        // Enviar el item al scoreboard usando el análisis port
+      if(wr_op) begin
         mon_analysis_port.write(item);
-
-        
         `uvm_info("sdram_monitor_wr", $sformatf("Escrito - Dirección: 0x%0h | Dato: 0x%0h", item.address, item.data), UVM_LOW);
       end
     end
@@ -81,37 +73,21 @@ class sdram_monitor_rd extends sdram_monitor;
   virtual task run_phase(uvm_phase phase);
     sram_item item = sram_item::type_id::create("item", this); // Crea un nuevo item para capturar datos
     //ACR_item item2 = ACR_item::type_id::create("item2", this); // Crea un nuevo item para capturar datos
-	
+
+    logic rd_op = 1'b0;
+
     forever begin
-      @(posedge intf.sys_clk); // Sincronización con el reloj de la interfaz
-     // cycle_count = cycle_count + 1; // Incrementamos el contador de ciclos
+      intf.mntr_rd(item.address, item.data, rd_op);
 
-     // if ( ~intf.sdr_cs_n & ~intf.sdr_ras_n & ~intf.sdr_cas_n & intf.sdr_we_n ) begin
-        // Imprimir el tiempo total en ns, multiplicando el número de ciclos por el período del ciclo
-       // real time_ns = cycle_count * clock_period_ns;
-		//item.time_ns = intf.SDR_trcar_d;
-        /*`uvm_info("PROBANDO DELAY SDRAM", 
-          $sformatf("Tiempo total (en ns) para %0d ciclos: %.2f ns", cycle_count, time_ns), 
-          UVM_LOW);*/
-      //end
-
-      // Monitorea la transacción de lectura
-      if (intf.wb_ack_o == 1'b1 && intf.wb_we_i == 1'b0) begin
-        item.address = intf.wb_addr_i; // Captura la dirección
-        item.data = intf.wb_dat_o; // Captura los datos de salida del bus
-
-        // Enviar el item al scoreboard usando el análisis port
+      if (rd_op) begin
         mon_analysis_port.write(item);
         //mon_analysis_port2.write(item2)
-        
-        
         `uvm_info("sdram_monitor_rd", $sformatf("Leído - Dirección: 0x%0h | Dato: 0x%0h", item.address, item.data), UVM_LOW);
       end
     end
   endtask
 
 endclass
-
 
 class monitor_ACR extends uvm_monitor;
   `uvm_component_utils(monitor_ACR)
