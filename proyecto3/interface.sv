@@ -43,7 +43,7 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
   logic sdr_we_n;
 
   //For testing
-  logic [1:0] Col_bits;
+  logic [1:0] cfg_colbits;
 
   //--------------------------------------------
   // MODULE PARAMS

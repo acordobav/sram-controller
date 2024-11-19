@@ -42,6 +42,7 @@
 `include "virtual_seq.sv"
 `include "virtual_seq_colBits1.sv"
 `include "virtual_seq_sel1.sv"
+`include "virtual_seq_row_bank.sv"
 `include "virtual_seq_enable_rst.sv"
 `include "virtual_seq_CAS1.sv"
 
@@ -68,6 +69,7 @@
 `include "test_1.sv"
 `include "test_ColBits.sv"
 `include "test_sel.sv"
+`include "test_row_bank.sv"
 `include "test_CAS_latency.sv"
 
 `include "assertion.sv"

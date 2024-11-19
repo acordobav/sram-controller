@@ -249,9 +249,9 @@ module mt48lc2m32b2 (Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm);
 
         // Auto Refresh
         if (Aref_enable === 1'b1) begin
-            if (Debug) begin
-                $display ("%m : at time %t AREF : Auto Refresh", $time);
-            end
+            // if (Debug) begin
+            //     $display ("%m : at time %t AREF : Auto Refresh", $time);
+            // end
 
             // Auto Refresh to Auto Refresh
             if ($time - RFC_chk < tRFC) begin

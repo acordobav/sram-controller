@@ -1,15 +1,28 @@
 class sram_item extends uvm_sequence_item;
   
-`ifdef SDR_32BIT
   rand logic [31:0] data;
-  rand logic [10:0] address;
+  rand logic [31:0] address;
+  
+  // Constraint address value
+  constraint valid_address {
+  	address inside {[32'h00000000:32'h003FF]};
+  }
+
+// Constraint data value
+`ifdef SDR_32BIT
+  constraint valid_data {
+  	address inside {[32'h00000000:32'hFFFFFFFF]};
+  }
 `elsif SDR_16BIT
-  rand logic [15:0] data;
-  rand logic [11:0] address;
+  constraint valid_data {
+  	address inside {[32'h00000000:32'h0000FFFF]};
+  }
 `else
-  rand logic [7:0]  data;
-  rand logic [11:0] address;
+  constraint valid_data {
+  	address inside {[32'h00000000:32'h000000FF]};
+  }
 `endif
+
   int time_ns;
 
   randc logic [3:0]  sel;

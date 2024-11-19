@@ -106,7 +106,7 @@ class spec_param_driver extends uvm_driver #(spec_param_item);
   
   virtual task bit_columns_drive(spec_param_item n_param);
     $display("[Driver INIT PARAMS] Updating Column Bits");
-    intf.Col_bits = n_param.bitColumns;
+    // intf.cfg_colbits = n_param.bitColumns;
     $display("[Driver INIT PARAMS] Colum Bits updated to %0d", n_param.bitColumns);
   endtask
   

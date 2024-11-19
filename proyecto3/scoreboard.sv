@@ -90,7 +90,7 @@ class scoreboard extends uvm_scoreboard;
            ErrCnt = ErrCnt + 1;
        end
        else begin
-         `uvm_info ("scoreboard (monitor)", $sformatf("SUCCEED | data expected is %d, data otained from SDR_trcar_d %d", exp_data, item.time_ns), UVM_NONE)
+          // `uvm_info ("scoreboard (monitor)", $sformatf("SUCCEED | data expected is %d, data otained from SDR_trcar_d %d", exp_data, item.time_ns), UVM_NONE)
        end
           // Address was accessed at some point, check its value
     end
