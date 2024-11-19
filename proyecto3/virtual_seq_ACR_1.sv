@@ -1,0 +1,39 @@
+class virtual_sequence_ACR_1 extends uvm_sequence;
+  `uvm_object_utils(virtual_sequence_ACR_1)
+  `uvm_declare_p_sequencer(virtual_sequencer)
+  
+  rand logic [14:0] t_delay;
+  
+  function new(string name="virtual_sequence_ACR_1");
+    super.new(name);
+  endfunction
+  
+  // Add Seqr and its Gen
+  init_params_sequencer init_params_seqr;
+  reset_sequencer reset_seqr;
+  sram_sequencer sram_seqr;
+  
+  gen_init_params_item_seq seq1;
+  gen_reset_item_seq seq2;
+  gen_sram_item_seq seq3;
+  
+  virtual task body();
+    
+    seq1 = gen_init_params_item_seq::type_id::create("seq1");
+    seq2 = gen_reset_item_seq::type_id::create("seq2");
+    seq3 = gen_sram_item_seq::type_id::create("seq3");
+    
+    for (int i = 0; i < 20; i ++) begin
+      seq1.randomize();
+   	  seq1.start(p_sequencer.init_params_seqr);
+      seq2.randomize();
+      seq2.start(p_sequencer.reset_seqr);
+    end
+    
+  endtask
+endclass
+
+
+function int t_f1();
+    t_f1 = $urandom_range(1000, 10000); 
+endfunction

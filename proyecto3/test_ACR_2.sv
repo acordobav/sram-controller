@@ -1,10 +1,10 @@
-class test_sel_1 extends uvm_test;
-  `uvm_component_utils(test_sel_1)
+class test_ACR_2 extends uvm_test;
+  `uvm_component_utils(test_ACR_2)
 
   virtual intf_wb intf;  
   environment env;
   
-  function new(string name = "test_sel_1", uvm_component parent = null);
+  function new(string name = "test_ACR_2", uvm_component parent = null);
     super.new(name, parent);
   endfunction : new      
 
@@ -29,15 +29,15 @@ class test_sel_1 extends uvm_test;
     print();    
   endfunction : end_of_elaboration_phase
   
-  virtual_sequence_sel v_seq_sel_1;
+  virtual_sequence_ACR_2 v_seq_ACR;
   
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
     $display("\n-------------------------------------------------- ");
-    $display("****************** SELECTOR TESTS *******************");
+    $display("********************* ACR TEST **********************");
     $display("--------------------------------------------------\n");
-    v_seq_sel_1 = virtual_sequence_sel::type_id::create("v_seq_sel_1");
-    v_seq_sel_1.start(env.virtual_seqr);
+    v_seq_ACR = virtual_sequence_ACR_2::type_id::create("v_seq_ACR");
+    v_seq_ACR.start(env.virtual_seqr);
     phase.drop_objection(this);
   endtask
 endclass

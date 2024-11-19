@@ -45,6 +45,8 @@
 `include "virtual_seq_row_bank.sv"
 `include "virtual_seq_enable_rst.sv"
 `include "virtual_seq_CAS1.sv"
+`include "virtual_seq_ACR_1.sv"
+`include "virtual_seq_ACR_2.sv"
 
 `include "scoreboard.sv"
 `include "monitor.sv"
@@ -71,5 +73,8 @@
 `include "test_sel.sv"
 `include "test_row_bank.sv"
 `include "test_CAS_latency.sv"
+`include "test_ACR_1.sv"
+`include "test_ACR_2.sv"
+`include "test_reset.sv"
 
 `include "assertion.sv"

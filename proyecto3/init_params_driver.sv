@@ -25,7 +25,8 @@ class init_params_item extends uvm_sequence_item;
   constraint SDR_trp_d_limit    {SDR_trp_d    inside {4'h2,4'h2};}
   constraint SDR_trcd_d_limit   {SDR_trcd_d   inside {4'h2,4'h2};}
   constraint SDR_cas_limit      {SDR_cas      inside {3'h3,3'h3};}
-  constraint SDR_trcar_d_limit  {SDR_trcar_d  inside {4'h1, 4'hf};} //probando randomizar esta señal de refresh 
+  constraint SDR_trcar_d_limit  {SDR_trcar_d  inside {4'h1, 4'h2, 4'h3, 4'h4, 4'h5, 4'h6, 4'h7, 4'h8, 
+                               						  4'h9, 4'ha, 4'hb, 4'hc, 4'hd, 4'he, 4'hf};} //probando randomizar esta señal de refresh 
   constraint SDR_twr_d_limit    {SDR_twr_d    inside {4'h1,4'h1};}
   constraint SDR_rf_sh_limit    {SDR_rf_sh    inside {12'h100,12'h100};}
   constraint SDR_rf_max_limit   {SDR_rf_max   inside {3'h6,3'h6};}
