@@ -31,13 +31,19 @@
 `include "init_params_driver.sv"
 `include "reset_driver.sv"
 `include "sram_driver.sv"
+`include "spec_param_driver.sv"
 
 `include "init_params_seqr.sv"
 `include "reset_seqr.sv"
 `include "sram_sqer.sv"
+`include "spec_param_seqr.sv"
 
 `include "virtual_seqr.sv"
 `include "virtual_seq.sv"
+`include "virtual_seq_colBits1.sv"
+`include "virtual_seq_sel1.sv"
+`include "virtual_seq_enable_rst.sv"
+`include "virtual_seq_CAS1.sv"
 
 `include "scoreboard.sv"
 `include "monitor.sv"
@@ -45,8 +51,9 @@
 `include "init_params_agent.sv"
 `include "reset_agent.sv"
 `include "agent_sram.sv"
+`include "spec_param_agent.sv"
 
-//`include "coverage.sv"
+`include "coverage.sv"
 
 `include "env.sv"
 
@@ -58,6 +65,9 @@
 `include "mt48lc8m8a2.v"
 `endif
 
-//`include "assertion.sv"
-
 `include "test_1.sv"
+`include "test_ColBits.sv"
+`include "test_sel.sv"
+`include "test_CAS_latency.sv"
+
+`include "assertion.sv"

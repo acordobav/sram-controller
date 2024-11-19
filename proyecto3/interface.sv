@@ -42,6 +42,9 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
   logic sdr_cas_n;
   logic sdr_we_n;
 
+  //For testing
+  logic [1:0] Col_bits;
+
   //--------------------------------------------
   // MODULE PARAMS
   //--------------------------------------------
@@ -56,8 +59,12 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
   logic [3:0]  SDR_twr_d;
   logic [11:0] SDR_rf_sh;
   logic [3:0]  SDR_rf_max;
-
+  
   task reset();
+    //Timeout Config
+    integer timeout_cycle;
+    integer counter;
+  
     $display("Executing Reset");
     // ErrCnt          = 0;
     intf.wb_addr_i     = 0;
@@ -74,9 +81,25 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
     #10000
     intf.RESETN        = 1'h1;
     #1000;
-    wait(intf.sdr_init_done == 1);
-    #500;
-    $display("Finish Reset");
+
+    timeout_cycle = 5000;
+    counter = 0;
+    
+    while (intf.sdr_init_done != 1) begin
+      #10
+      counter++;
+      if (counter >= timeout_cycle) begin
+        $display("[Driver RST] Timeout waiting for sdr_init_done");
+        break;
+      end
+    end
+    
+    if (intf.sdr_init_done == 1) begin
+      $display("[Driver RST] Finish Reset. sdr_init_done detected.");
+    end else begin
+      $display("[Driver RST] Finish Reset. sdr_init_done not detected.");
+    end
+
   endtask
 
   task write(input logic[11:0] address,
@@ -87,6 +110,32 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
       intf.wb_cyc_i        = 1;
       intf.wb_we_i         = 1;
       intf.wb_sel_i        = 4'b1111;
+      intf.wb_addr_i       = address;
+      intf.wb_dat_i        = data;
+
+      do begin
+        @ (posedge intf.sys_clk);
+      end while(intf.wb_ack_o == 1'b0);
+      @ (negedge intf.sys_clk);
+
+      intf.wb_stb_i        = 0;
+      intf.wb_cyc_i        = 0;
+      intf.wb_we_i         = 'hx;
+      intf.wb_sel_i        = 'hx;
+      intf.wb_addr_i       = 'hx;
+      intf.wb_dat_i        = 'hx;    
+    end
+  endtask
+
+  task write_with_selector(input logic[11:0] address,
+                           input logic[31:0] data,
+                           input logic[3:0]  sel);
+    begin
+      @ (negedge intf.sys_clk);
+      intf.wb_stb_i        = 1;
+      intf.wb_cyc_i        = 1;
+      intf.wb_we_i         = 1;
+      intf.wb_sel_i        = sel;
       intf.wb_addr_i       = address;
       intf.wb_dat_i        = data;
 
