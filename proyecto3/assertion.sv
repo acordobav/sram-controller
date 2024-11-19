@@ -29,6 +29,17 @@ module assertions();
     (!`DUV_PATH.wb_rst_i) |-> ##1 (`DUV_PATH.wb_stb_i == 1'b0 && `DUV_PATH.wb_cyc_i == 1'b0);
   endproperty
   
+  //SDR NOT ENABLED
+  property before_SDR_enable_behavior_p;
+    @(posedge `DUV_PATH.sdram_clk)
+    (!`DUV_PATH.cfg_sdr_en) |=> (`DUV_PATH.sdr_init_done == 1'b0);
+  endproperty
+  
+  property after_SDR_enable_behavior_p;
+    @(posedge `DUV_PATH.sdram_clk)
+    (`DUV_PATH.cfg_sdr_en) |-> ##[1:$] (`DUV_PATH.sdr_init_done == 1'b1);
+  endproperty
+  
   //WRITE AND READ ASSERTS
   
   property during_write_behavior_p;
@@ -36,7 +47,6 @@ module assertions();
     disable iff (!`DUV_PATH.wb_rst_i)
     (`DUV_PATH.wb_stb_i && `DUV_PATH.wb_cyc_i && `DUV_PATH.wb_we_i) |-> (`DUV_PATH.wb_addr_i != 1'bx && `DUV_PATH.wb_addr_i != 1'bz && `DUV_PATH.wb_dat_i != 1'bx && `DUV_PATH.wb_dat_i != 1'bz);
   endproperty      
-  
         
   property after_write_behavior_p;
     @(posedge `DUV_PATH.sdram_clk)
@@ -60,13 +70,17 @@ module assertions();
     
   // Duracion de reset
   reset_duration_a: assert property (reset_duration_p) else $error("Rule3.05: WISHBONE RST signal must be asserted for at least one complete clock cycle");
-
     
   // Aserción para wb_stb_i y wb_cyc_i después de reset
   after_after_reset_a: assert property (after_reset_behavior_p) else $error("Rule3.20: WISHBONE signals wb_stb_i and wb_cyc_i must remain negated immediately after reset");
   
   // Aserción para wb_stb_i y wb_cyc_i durante reset
   on_reset_behavior_a: assert property (on_reset_behavior_p) else $error("Rule3.21: WISHBONE signals wb_stb_i and wb_cyc_i must remain negated on reset");
+    
+    //SDR ENABLE
+    before_SDR_enable_behavior_a: assert property (before_SDR_enable_behavior_p) else $error("Rule5.1: WISHBONE signal sdr_init_done must be deasserted whenever SDR Enable is not asserted");
+    
+      after_SDR_enable_behavior_a: assert property (after_SDR_enable_behavior_p) else $error("Rule5.11: WISHBONE signal sdr_init_done must be asserted whenever after SDR Enable is asserted");
   
   //Aserción durante WRITE operations
   during_write_behavior_a: assert property (during_write_behavior_p) else $error("Rule4.20: WISHBONE signals (wb_addr_i, wb_dat_i) not in correct state while on write operation");
