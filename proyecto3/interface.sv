@@ -59,7 +59,7 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
 
   task reset();
     $display("Executing Reset");
-	  // ErrCnt          = 0;
+    // ErrCnt          = 0;
     intf.wb_addr_i     = 0;
     intf.wb_dat_i      = 0;
     intf.wb_sel_i      = 4'h0;
@@ -67,7 +67,7 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
     intf.wb_stb_i      = 0;
     intf.wb_cyc_i      = 0;
 
-	  // Seq of reset
+    // Seq of reset
     intf.RESETN        = 1'h1;
     #100;
     intf.RESETN        = 1'h0;
@@ -153,6 +153,49 @@ interface intf_wb #(parameter dw=32) (input sys_clk, sdram_clk);  //Communicates
       address = intf.wb_addr_i; // Captura la dirección
       data = intf.wb_dat_o;     // Captura los datos de salida del bus
     end
+  endtask
+
+  task auto_cntr_refresh(output int        item_time_ns,
+                         output logic[3:0] item_signal,
+                         output int        aref_negedge,
+                         output int        watchdog,
+                         output int        time_ns,
+                         output bit        flag_count,
+                         output logic      aref_verif);
+    @(posedge intf.sys_clk); // Sincronización con el reloj de la interfaz
+    watchdog = $time;
+    if((watchdog - time_ns) > 340) begin
+      time_ns = 0;
+      aref_negedge = 0;
+      flag_count = 0;
+    end
+
+    aref_verif = (~intf.sdr_cs_n && ~intf.sdr_ras_n && ~intf.sdr_cas_n && intf.sdr_we_n) && aref_negedge == 1;
+
+    if ( ~intf.sdr_cs_n && ~intf.sdr_ras_n && ~intf.sdr_cas_n && intf.sdr_we_n ) begin
+      if(aref_negedge == 1) begin
+        item_time_ns = $time - time_ns;
+        //`uvm_info("time arriba", $sformatf("Tiempo total (en ns) para %0d ", ($time - time_ns)),UVM_LOW);
+        //`uvm_info("time arriba", $sformatf("Tiempo total (en ns) para %0d ", item.time_ns),UVM_LOW);   
+        //tiempo_actual - tiempo anterior
+        item_signal = intf.SDR_trcar_d;
+        aref_negedge = 0;
+      end
+      if (flag_count == 0) begin
+          time_ns = $time;
+      end
+
+      flag_count = 1;
+      //`uvm_info("time abajo", $sformatf("Tiempo total (en ns) para %0d ", $time),UVM_LOW);
+      //capturar tiempo
+    end
+    else begin
+      if(flag_count == 1) begin
+        aref_negedge = 1;
+        flag_count = 0;
+      end
+    end
+
   endtask
 
 endinterface

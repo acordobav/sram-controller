@@ -16,8 +16,6 @@ class scoreboard extends uvm_scoreboard;
   uvm_analysis_imp_init #(init_params_item, scoreboard) sram_init;  // Monitor
 
   // Reference model
-  int afifo[$];    // address fifo
-  int bfifo[$];    // Burst Length fifo
   int memory[int]; // Declare an associative array which will model the memory
   int ErrCnt = 0;  // Error counter
 
@@ -76,12 +74,6 @@ class scoreboard extends uvm_scoreboard;
 
     
   endfunction  
-
-  
-  
-  
-  
-  
   
 // end of test logic
   virtual function void check_phase (uvm_phase phase);
