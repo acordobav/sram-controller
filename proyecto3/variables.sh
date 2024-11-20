@@ -4,3 +4,5 @@ export VCS_HOME=/mnt/vol_NFS_alajuela/qtree_NFS_rh003/synopsys_tools/synopsys/vc
 export PATH=$PATH:$VCS_HOME/linux64/bin
 export UVM_HOME=/mnt/vol_NFS_alajuela/qtree_NFS_rh003/synopsys_tools/synopsys/vcs-mx/O-2018.09-SP2-3/etc/uvm
 export LD_LIBRARY_PATH=$VCS_HOME/linux64/lib
+
+chmod +x *.sh
